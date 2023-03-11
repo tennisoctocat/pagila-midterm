@@ -38,7 +38,7 @@ UNION (
     JOIN country USING (country_id)
     WHERE address ILIKE '%F%' OR city ILIKE '%F%' OR country ILIKE '%F%'
 ))
-SELECT title FROM film
+SELECT DISTINCT title FROM film
 WHERE film_id NOT IN
-(SELECT film_id FROM contains_f);
-
+(SELECT film_id FROM contains_f)
+ORDER BY title;
