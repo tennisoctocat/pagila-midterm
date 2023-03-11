@@ -12,3 +12,33 @@
  * NOTE:
  * Your results should not contain any duplicate titles.
  */
+
+/* I'm going to assume that by avoiding the letter 'F', this means that we want to avoid everything that has 'F' or 'f'. If it was supposed to be just 'F', then I would change all of the ILIKE keywords to LIKE keywords instead. */
+
+WITH contains_f AS (
+    SELECT film_id FROM film
+    WHERE title ILIKE '%F%'
+UNION (
+    SELECT film_id FROM film_actor
+    JOIN actor USING (actor_id)
+    WHERE first_name ILIKE '%F%' OR last_name ILIKE '%F%'
+) UNION (
+    SELECT film_id FROM film
+    JOIN inventory USING (film_id)
+    JOIN rental USING (inventory_id)
+    JOIN customer USING (customer_id)
+    WHERE first_name ILIKE '%F%' OR last_name ILIKE '%F%'
+) UNION (
+    SELECT film_id FROM film
+    JOIN inventory USING (film_id)
+    JOIN rental USING (inventory_id)
+    JOIN customer USING (customer_id)
+    JOIN address USING (address_id)
+    JOIN city USING (city_id)
+    JOIN country USING (country_id)
+    WHERE address ILIKE '%F%' OR city ILIKE '%F%' OR country ILIKE '%F%'
+))
+SELECT title FROM film
+WHERE film_id NOT IN
+(SELECT film_id FROM contains_f);
+
